@@ -14,13 +14,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __ASM_AUXVEC_H
-#define __ASM_AUXVEC_H
+#ifndef __ASM_UCONTEXT_H
+#define __ASM_UCONTEXT_H
 
-/* vDSO location */
-#define AT_SYSINFO_EHDR	33
-#define AT_MINSIGSTKSZ	51	/* stack needed for signal delivery */
+#include <linux/types.h>
 
-#define AT_VECTOR_SIZE_ARCH 2 /* entries in ARCH_DLINFO */
+struct ucontext {
+	unsigned long	  uc_flags;
+	struct ucontext	 *uc_link;
+	stack_t		  uc_stack;
+	sigset_t	  uc_sigmask;
+	/* glibc uses a 1024-bit sigset_t */
+	__u8		  __unused[1024 / 8 - sizeof(sigset_t)];
+	/* last for future expansion */
+	struct sigcontext uc_mcontext;
+};
 
-#endif
+#endif /* __ASM_UCONTEXT_H */
