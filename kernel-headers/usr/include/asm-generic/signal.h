@@ -1,28 +1,91 @@
 /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+#ifndef __ASM_GENERIC_SIGNAL_H
+#define __ASM_GENERIC_SIGNAL_H
+
+#include <linux/types.h>
+
+#define _NSIG		64
+#define _NSIG_BPW	__BITS_PER_LONG
+#define _NSIG_WORDS	(_NSIG / _NSIG_BPW)
+
+#define SIGHUP		 1
+#define SIGINT		 2
+#define SIGQUIT		 3
+#define SIGILL		 4
+#define SIGTRAP		 5
+#define SIGABRT		 6
+#define SIGIOT		 6
+#define SIGBUS		 7
+#define SIGFPE		 8
+#define SIGKILL		 9
+#define SIGUSR1		10
+#define SIGSEGV		11
+#define SIGUSR2		12
+#define SIGPIPE		13
+#define SIGALRM		14
+#define SIGTERM		15
+#define SIGSTKFLT	16
+#define SIGCHLD		17
+#define SIGCONT		18
+#define SIGSTOP		19
+#define SIGTSTP		20
+#define SIGTTIN		21
+#define SIGTTOU		22
+#define SIGURG		23
+#define SIGXCPU		24
+#define SIGXFSZ		25
+#define SIGVTALRM	26
+#define SIGPROF		27
+#define SIGWINCH	28
+#define SIGIO		29
+#define SIGPOLL		SIGIO
 /*
- * Copyright (C) 2012 ARM Ltd.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License version 2 as
- * published by the Free Software Foundation.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-#ifndef __ASM_SIGNAL_H
-#define __ASM_SIGNAL_H
+#define SIGLOST		29
+*/
+#define SIGPWR		30
+#define SIGSYS		31
+#define	SIGUNUSED	31
 
-/* Required for AArch32 compatibility. */
-#define SA_RESTORER	0x04000000
-
-#define MINSIGSTKSZ 5120
-#define SIGSTKSZ    16384
-
-#include <asm-generic/signal.h>
-
+/* These should not be considered constants from userland.  */
+#define SIGRTMIN	32
+#ifndef SIGRTMAX
+#define SIGRTMAX	_NSIG
 #endif
+
+#if !defined MINSIGSTKSZ || !defined SIGSTKSZ
+#define MINSIGSTKSZ	2048
+#define SIGSTKSZ	8192
+#endif
+
+#ifndef __ASSEMBLY__
+typedef struct {
+	unsigned long sig[_NSIG_WORDS];
+} sigset_t;
+
+/* not actually used, but required for linux/syscalls.h */
+typedef unsigned long old_sigset_t;
+
+#include <asm-generic/signal-defs.h>
+
+#ifdef SA_RESTORER
+#define __ARCH_HAS_SA_RESTORER
+#endif
+
+struct sigaction {
+	__sighandler_t sa_handler;
+	unsigned long sa_flags;
+#ifdef SA_RESTORER
+	__sigrestore_t sa_restorer;
+#endif
+	sigset_t sa_mask;		/* mask last for extensibility */
+};
+
+typedef struct sigaltstack {
+	void *ss_sp;
+	int ss_flags;
+	size_t ss_size;
+} stack_t;
+
+#endif /* __ASSEMBLY__ */
+
+#endif /* __ASM_GENERIC_SIGNAL_H */
