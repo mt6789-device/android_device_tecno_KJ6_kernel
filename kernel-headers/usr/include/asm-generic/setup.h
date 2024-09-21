@@ -1,5 +1,8 @@
 /* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
 /*
+ * Based on arch/arm/include/asm/setup.h
+ *
+ * Copyright (C) 1997-1999 Russell King
  * Copyright (C) 2012 ARM Ltd.
  *
  * This program is free software; you can redistribute it and/or modify
@@ -14,13 +17,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef __ASM_AUXVEC_H
-#define __ASM_AUXVEC_H
+#ifndef __ASM_SETUP_H
+#define __ASM_SETUP_H
 
-/* vDSO location */
-#define AT_SYSINFO_EHDR	33
-#define AT_MINSIGSTKSZ	51	/* stack needed for signal delivery */
+#include <linux/types.h>
 
-#define AT_VECTOR_SIZE_ARCH 2 /* entries in ARCH_DLINFO */
+#define COMMAND_LINE_SIZE	2048
 
 #endif
